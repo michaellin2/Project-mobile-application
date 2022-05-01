@@ -4,17 +4,17 @@ import {
 }
   from 'react-native';
 import backIcon from '../assets/backIcon.png';
+import WifiManager from 'react-native-wifi';
 
 class WiFiPage extends Component {
     constructor(props) {
       super(props);
   
       this.state = {
-        id1: '',
-        isLoading: true,
-        listData: [],
+        
       };
     }
+    
 
     render(){
         return(
@@ -31,6 +31,7 @@ class WiFiPage extends Component {
                 </View>
                 <View>
                     <Text style={{fontSize:25,fontWeight:'bold',margin:5}}>Network</Text>
+                    
                 </View>                      
             </View>
         );

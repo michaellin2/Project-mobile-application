@@ -14,7 +14,7 @@ class colorAdjustmentPage extends Component {
       super(props);
   
       this.state = {
-        background: '#fff',
+        background: '#FFFFF',
       };
     }
 
