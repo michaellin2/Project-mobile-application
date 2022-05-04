@@ -1,23 +1,53 @@
 import React, { Component } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ImageBackground,
-  Dimensions,
-  Alert,
-} from "react-native";
-// import { SliderPicker } from 'react-color';
-// import { CompactPicker } from 'react-color';
-// import { ColorWheel } from 'react-native-color-wheel';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import ColorPicker from "react-native-wheel-color-picker";
-import menuIcon from "../assets/menuIcon.png";
 import switchOffIcon from "../assets/switchOff.png";
 import switchOnIcon from "../assets/switchOn.png";
+import backIcon from "../assets/backIcon.png";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  topBar: {
+    justifyContent: "space-between",
+    flexDirection: "row",
+    backgroundColor: "black",
+    width: "100%",
+    height: "12%",
+  },
+  addImage: {
+    width: 40,
+    height: 40,
+    alignSelf: "center",
+    marginTop: 20,
+    marginLeft: 10,
+  },
+  colorPage: {
+    color: "white",
+    alignSelf: "center",
+    fontSize: 30,
+    marginRight: 10,
+  },
+  switchButton: {
+    width: 40,
+    height: 40,
+    margin: 10,
+  },
+  buttonPosition: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignSelf: "center",
+  },
+  buttonStyle: {
+    borderWidth: 2,
+    borderRadius: 5,
+    padding: 10,
+    width: "100%",
+    alignSelf: "center",
+  },
+});
 
 class ColorAdjustmentPage extends Component {
   constructor(props) {
@@ -31,12 +61,9 @@ class ColorAdjustmentPage extends Component {
       switch: switchOffIcon,
       currColors: "",
       currColor: {},
+      hue: 0,
     };
   }
-
-  // handleChangeComplete = (color) => {
-  //     this.setState({ background: color.hex });
-  // };
 
   async componentDidMount() {
     this.refresh = this.props.navigation.addListener("focus", () => {
@@ -184,7 +211,7 @@ class ColorAdjustmentPage extends Component {
     if (h < 0) {
       h += 360;
     }
-    return Math.round(h);
+    this.setState({ hue: Math.round(h) });
   };
 
   colorChanges = async () => {
@@ -192,40 +219,18 @@ class ColorAdjustmentPage extends Component {
       currColor = {
         color: this.state.currColors,
       };
+      this.rgbToHue(currColor.color);
+      const toSend = {
+        color: this.state.hue,
+      };
       const currRoomIp = JSON.parse(await AsyncStorage.getItem("currRoomIp"));
       return fetch(`http://${currRoomIp}:80/setRGB`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(currColor),
+        body: JSON.stringify(toSend),
       })
         .then((response) => {
           if (response.status === 201) {
-            return response.json();
-          }
-          if (response.status === 401) {
-            throw new Error("Unauthorised");
-          } else if (response.status === 404) {
-            throw new Error("Not Found");
-          } else {
-            throw new Error("Server error");
-          }
-        })
-        .then((responseJson) => {
-          this.rgbToHue(currColor.color);
-          
-        })
-        .catch((error) => {
-          Error(error);
-        });
-    }
-  };
-
-  getRGBLight=async()=>{
-    if (this.state.RGBButton == true) {
-      const currRoomIp = JSON.parse(await AsyncStorage.getItem("currRoomIp"));
-      return fetch(`http://${currRoomIp}:80/getRGB`)
-        .then((response) => {
-          if (response.status === 200) {
             return response.json();
           }
           if (response.status === 401) {
@@ -244,27 +249,18 @@ class ColorAdjustmentPage extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
-        <View
-          style={{
-            justifyContent: "space-between",
-            flexDirection: "row",
-            backgroundColor: "black",
-            width: "100%",
-            height: "12%",
-          }}
-        >
-          <Text style={{ alignSelf: "center" }}>Home</Text>
-          <Text style={{ color: "white", alignSelf: "center", fontSize: 30 }}>
-            {this.state.currDeviceName}
-          </Text>
+      <View style={styles.container}>
+        <View style={styles.topBar}>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate("home")}
+          >
+            <Image style={styles.addImage} source={backIcon} />
+          </TouchableOpacity>
+          <Text style={styles.colorPage}>{this.state.currDeviceName}</Text>
           <Text style={{ alignSelf: "center" }}>Home</Text>
         </View>
         <TouchableOpacity onPress={() => this.checkRGB()}>
-          <Image
-            style={{ width: 40, height: 40, margin: 10 }}
-            source={this.state.switch}
-          />
+          <Image style={styles.switchButton} source={this.state.switch} />
         </TouchableOpacity>
         <View>
           <ColorPicker
@@ -274,21 +270,12 @@ class ColorAdjustmentPage extends Component {
           />
         </View>
 
-        <View
-          style={{ flex: 1, justifyContent: "flex-end", alignSelf: "center" }}
-        >
+        <View style={styles.buttonPosition}>
           <TouchableOpacity
             onPress={() => this.removeCurrDevice(this.state.currDeviceName)}
-            style={{
-              borderWidth: 2,
-              borderRadius: 5,
-              fontSize: 30,
-              padding: 10,
-              width: "100%",
-              alignSelf: "center",
-            }}
+            style={styles.buttonStyle}
           >
-            <Text>Remove Device</Text>
+            <Text style={{fontSize: 20}}>Remove Device</Text>
           </TouchableOpacity>
         </View>
       </View>

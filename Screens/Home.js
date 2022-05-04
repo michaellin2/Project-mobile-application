@@ -6,12 +6,54 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  ImageBackground,
 } from "react-native";
 import addIcon from "../assets/addIcon.png";
 import switchOffIcon from "../assets/switchOff.png";
 import switchOnIcon from "../assets/switchOn.png";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  topBar: {
+    justifyContent: "space-between",
+    flexDirection: "row",
+    backgroundColor: "black",
+    width: "100%",
+    height: "12%",
+  },
+  addImage: {
+    width: 50,
+    height: 50,
+    alignSelf: "center",
+    marginTop: 15,
+  },
+  home: {
+    color: "white",
+    alignSelf: "center",
+    fontSize: 30,
+    marginRight: 10,
+  },
+  insideHeader: {
+    fontSize: 25,
+    fontWeight: "bold",
+    margin: 5,
+  },
+  flatListStyle: {
+    margin: 5,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderWidth: 2,
+    borderRadius: 15,
+    padding: 10,
+  },
+  switchButton: {
+    width: 30,
+    height: 30,
+    alignSelf: "center",
+  },
+});
 
 class HomePage extends Component {
   constructor(props) {
@@ -39,9 +81,9 @@ class HomePage extends Component {
     this.refresh();
   }
 
-  refreshScreen= async() =>{
+  refreshScreen = async () => {
     this.getDevice();
-  }
+  };
 
   getDevice = async () => {
     const Device = JSON.parse(await AsyncStorage.getItem("device"));
@@ -49,9 +91,9 @@ class HomePage extends Component {
   };
 
   currRoom = async (item) => {
-    await AsyncStorage.setItem('currRoomName', JSON.stringify(item.DeviceName));
-    await AsyncStorage.setItem('currRoomIp', JSON.stringify(item.DeviceIp));
-    this.props.navigation.navigate('Color');
+    await AsyncStorage.setItem("currRoomName", JSON.stringify(item.DeviceName));
+    await AsyncStorage.setItem("currRoomIp", JSON.stringify(item.DeviceIp));
+    this.props.navigation.navigate("Color");
   };
 
   checkLightOn = async () => {
@@ -130,7 +172,7 @@ class HomePage extends Component {
       });
   };
 
-  checkTempSensor = async(item) => {
+  checkTempSensor = async (item) => {
     if (this.state.switch == switchOffIcon) {
       this.turnOnTempSensor(item);
       this.setState({
@@ -142,65 +184,27 @@ class HomePage extends Component {
         switch: switchOffIcon,
       });
     }
-  }
+  };
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
-        <View
-          style={{
-            justifyContent: "space-between",
-            flexDirection: "row",
-            backgroundColor: "black",
-            width: "100%",
-            height: "12%",
-          }}
-        >
+      <View style={styles.container}>
+        <View style={styles.topBar}>
           <TouchableOpacity
             onPress={() => this.props.navigation.navigate("AddDevice")}
           >
-            <Image
-              style={{
-                width: 50,
-                height: 50,
-                alignSelf: "center",
-                marginTop: 15,
-              }}
-              source={addIcon}
-            />
+            <Image style={styles.addImage} source={addIcon} />
           </TouchableOpacity>
-          <Text
-            style={{
-              color: "white",
-              alignSelf: "center",
-              fontSize: 30,
-              marginRight: 10,
-            }}
-          >
-            Home
-          </Text>
-          <TouchableOpacity onPress={()=>this.refreshScreen()}>
-            <Text style={{ alignSelf: "center" }}>Home</Text>
-          </TouchableOpacity>
+          <Text style={styles.home}>Home</Text>
+          <Text style={{ alignSelf: "center" }}>Home</Text>
         </View>
         <View>
-          <Text style={{ fontSize: 25, fontWeight: "bold", margin: 5 }}>
-            Device
-          </Text>
+          <Text style={styles.insideHeader}>Device</Text>
 
           <FlatList
             data={this.state.deviceList}
             renderItem={({ item }) => (
-              <View
-                style={{
-                  margin: 5,
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  borderWidth: 2,
-                  borderRadius: 15,
-                  padding: 10,
-                }}
-              >
+              <View style={styles.flatListStyle}>
                 <View style={{ flexDirection: "column" }}>
                   <TouchableOpacity onPress={() => this.currRoom(item)}>
                     <Text style={{ fontWeight: "bold", fontSize: 25 }}>
@@ -216,10 +220,7 @@ class HomePage extends Component {
                     this.checkTempSensor(item);
                   }}
                 >
-                  <Image
-                    style={{ width: 30, height: 30, alignSelf: "center" }}
-                    source={this.state.switch}
-                  />
+                  <Image style={styles.switchButton} source={this.state.switch} />
                 </TouchableOpacity>
               </View>
             )}
