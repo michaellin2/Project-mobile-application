@@ -4,6 +4,7 @@ import {
 }
   from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import backIcon from '../assets/backIcon.png';
 
 class AddDevicePage extends Component {
     constructor(props) {
@@ -24,11 +25,18 @@ class AddDevicePage extends Component {
           Device.push({ DeviceName: this.state.deviceName, DeviceIp: this.state.IPAddress });
           await AsyncStorage.setItem('device', JSON.stringify(Device));
         }
+        this.props.navigation.navigate('Home');
       };
 
     render(){
         return(
             <View style={{flex:1}}>
+              <TouchableOpacity onPress={() => this.props.navigation.goBack()} >
+                     <Image
+                         style={{width:40,height:40,marginTop:30}}
+                         source={backIcon}
+                     />
+              </TouchableOpacity>
                 <View style={{flex:1,justifyContent:'center',alignSelf:'center',flexDirection:'column'}}>
                     <Text style={{alignSelf:'center',margin:5,fontSize:30,fontWeight:'bold'}}>
                         Enter your device name
@@ -49,7 +57,7 @@ class AddDevicePage extends Component {
                         style={{borderWidth:2,borderRadius:10,padding:5,margin:5,textAlign:'center'}}
                     />
                 </View>
-                <TouchableOpacity onPress={()=>{this.props.navigation.navigate('Home'),this.createAccount()}} style={{borderWidth:2,borderRadius:5,fontSize:30,padding:10,width:'30%',alignSelf:'center'}}>
+                <TouchableOpacity onPress={()=>this.createAccount()} style={{borderWidth:2,borderRadius:5,fontSize:30,padding:10,width:'100%',alignSelf:'center'}}>
                     <Text style={{textAlign:'center',fontSize:25}}>Next</Text>
                 </TouchableOpacity>
             </View>

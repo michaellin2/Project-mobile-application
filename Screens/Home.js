@@ -39,6 +39,10 @@ class HomePage extends Component {
     this.refresh();
   }
 
+  refreshScreen= async() =>{
+    this.getDevice();
+  }
+
   getDevice = async () => {
     const Device = JSON.parse(await AsyncStorage.getItem("device"));
     this.setState({ deviceList: Device });
@@ -52,7 +56,7 @@ class HomePage extends Component {
 
   checkLightOn = async () => {
     const ip = await AsyncStorage.getItem("device");
-    return fetch(`http://${ip}:80/getRGB`, {})
+    return fetch(`http://${ip}:80/getRGB`)
       .then((response) => {
         if (response.status === 200) {
           return response.json();
@@ -76,7 +80,8 @@ class HomePage extends Component {
   };
 
   turnOnTempSensor = async (item) => {
-    return fetch(`http://${item.DeviceIp}:80/turnOnTempButton`, {})
+    console.log(item.DeviceIp);
+    return fetch(`http://${item.DeviceIp}:80/turnOnTempButton`)
       .then((response) => {
         if (response.status === 200) {
           return response.json();
@@ -101,7 +106,7 @@ class HomePage extends Component {
   };
 
   turnOffTempSensor = async (item) => {
-    return fetch(`http://${item.DeviceIp}:80/turnOffTempButton`, {})
+    return fetch(`http://${item.DeviceIp}:80/turnOffTempButton`)
       .then((response) => {
         if (response.status === 200) {
           return response.json();
@@ -174,7 +179,9 @@ class HomePage extends Component {
           >
             Home
           </Text>
-          <Text style={{ alignSelf: "center" }}>Home</Text>
+          <TouchableOpacity onPress={()=>this.refreshScreen()}>
+            <Text style={{ alignSelf: "center" }}>Home</Text>
+          </TouchableOpacity>
         </View>
         <View>
           <Text style={{ fontSize: 25, fontWeight: "bold", margin: 5 }}>
