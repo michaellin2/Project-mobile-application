@@ -21,11 +21,8 @@ class SettingPage extends Component {
         return(
             <View style={{flex:1}}>
                 <View style={{justifyContent:'space-between',flexDirection:'row',backgroundColor:'black',width:'100%',height:'12%'}}>
-                    <Image
-                        style={{width:30,height:30,alignSelf: 'center',margin:10}}
-                        source={menuIcon}
-                    />
-                <Text style={{color:'white',alignSelf:'center',fontSize:30,marginRight:10}}>Setting</Text>
+                <Text style={{alignSelf:'center'}}>Home</Text>
+                <Text style={{color:'white',alignSelf:'center',fontSize:30}}>Setting</Text>
                 <Text style={{alignSelf:'center'}}>Setting</Text>            
                 </View>
                 <View style={{flex:1,justifyContent:'center'}}>
