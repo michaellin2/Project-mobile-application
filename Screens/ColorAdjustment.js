@@ -223,6 +223,7 @@ class ColorAdjustmentPage extends Component {
         color: this.state.hue,
       };
       const currRoomIp = JSON.parse(await AsyncStorage.getItem("currRoomIp"));
+
       return fetch(`http://${currRoomIp}:80/setRGB`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -248,7 +249,7 @@ class ColorAdjustmentPage extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={{flex:1,backgroundColor:this.state.currColors,height:'100%',transition:'ease all 500ms'}}>
         <View style={styles.topBar}>
           <TouchableOpacity
             onPress={() => this.props.navigation.navigate("home")}

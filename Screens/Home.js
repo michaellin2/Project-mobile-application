@@ -122,7 +122,6 @@ class HomePage extends Component {
   };
 
   turnOnTempSensor = async (item) => {
-    console.log(item.DeviceIp);
     return fetch(`http://${item.DeviceIp}:80/turnOnTempButton`)
       .then((response) => {
         if (response.status === 200) {
