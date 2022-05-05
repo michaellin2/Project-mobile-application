@@ -226,7 +226,8 @@ class HomePage extends Component {
             )}
             keyExtractor={(item) => item.DeviceIp.toString()}
           />
-        </View>
+        </View>    
+         
       </View>
     );
   }

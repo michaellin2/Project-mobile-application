@@ -54,7 +54,6 @@ class ColorAdjustmentPage extends Component {
     super(props);
 
     this.state = {
-      background: "#FFFFF",
       currDeviceName: [],
       device: [],
       RGBButton: false,
@@ -176,9 +175,9 @@ class ColorAdjustmentPage extends Component {
 
   rgbToHue = (rgbColor) => {
     var h;
-    r = this.hexToRgb(rgbColor).r;
-    g = this.hexToRgb(rgbColor).g;
-    b = this.hexToRgb(rgbColor).b;
+    var r = this.hexToRgb(rgbColor).r;
+    var g = this.hexToRgb(rgbColor).g;
+    var b = this.hexToRgb(rgbColor).b;
     r = r / 255;
     g = g / 255;
     b = b / 255;
@@ -217,7 +216,7 @@ class ColorAdjustmentPage extends Component {
   colorChanges = async () => {
     if (this.state.RGBButton == true) {
       currColor = {
-        color: this.state.currColors,
+        color: this.state.currColors
       };
       this.rgbToHue(currColor.color);
       const toSend = {
