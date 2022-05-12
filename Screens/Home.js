@@ -71,7 +71,6 @@ class HomePage extends Component {
 
   async componentDidMount() {
     this.refresh = this.props.navigation.addListener("focus", () => {
-      this.checkLightOn();
       this.getDevice();
     });
     this.getDevice();
@@ -79,6 +78,27 @@ class HomePage extends Component {
 
   componentWillUnmount() {
     this.refresh();
+  }
+
+  getMotion = async()=> {
+    const Device = JSON.parse(await AsyncStorage.getItem("device"));
+    return fetch(`http://${Device[0].DeviceIp}:80/getMotion`)
+      .then((response) => {
+        console.log(Device.deviceIp)
+        if (response.status === 200) {
+          return response.json();
+        }
+        if (response.status === 401) {
+          throw new Error("Unauthorised");
+        } else if (response.status === 404) {
+          throw new Error("Not Found");
+        } else {
+          throw new Error("Server error");
+        }
+      })
+      .catch((error) => {
+        Error(error);
+      });
   }
 
   refreshScreen = async () => {

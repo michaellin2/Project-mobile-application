@@ -11,7 +11,6 @@ import SettingPage from './Screens/Setting';
 import WiFiPage from './Screens/WIFI';
 import AddDevicePage from './Screens/AddDevice';
 import homeIcon from './assets/home.png';
-import colorIcon from './assets/colorPanel.png';
 import settingIcon from './assets/setting.png';
 
 const Stack = createNativeStackNavigator();
@@ -35,19 +34,6 @@ function App() {
             <Image
               style={styles.imageIcon}
               source={homeIcon}
-            />
-          )
-          ,
-        }}
-      />
-      <Tab.Screen
-        name="Color"
-        component={ColorAdjustmentPage}
-        options={{
-          tabBarIcon: () => (
-            <Image
-              style={styles.imageIcon}
-              source={colorIcon}
             />
           )
           ,
