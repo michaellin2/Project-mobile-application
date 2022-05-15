@@ -54,6 +54,7 @@ class SettingPage extends Component {
         </View>
         <View style={styles.insideContainer}>
           <TouchableOpacity
+          //navigate to Wi-Fi page
             onPress={() => this.props.navigation.navigate("WIFI")}
           >
             <Text style={styles.insideText}>Connect to WiFi</Text>

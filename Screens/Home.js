@@ -235,6 +235,7 @@ class HomePage extends Component {
       <View style={styles.container}>
         <View style={styles.topBar}>
           <TouchableOpacity
+          //navigate the user to add device page when they clicked on the add device
             onPress={() => this.props.navigation.navigate("AddDevice")}
           >
             <Image style={styles.addImage} source={addIcon} />
@@ -246,6 +247,7 @@ class HomePage extends Component {
           <Text style={styles.insideHeader}>Device</Text>
 
           <FlatList
+          //display the devicelist in the flatlist
             data={this.state.deviceList}
             renderItem={({ item }) => (
               <View style={styles.flatListStyle}>
@@ -261,6 +263,7 @@ class HomePage extends Component {
                 </View>
                 <TouchableOpacity
                   onPress={() => {
+                    //when the user clicks on the temperature sensor button, call the checkTempSensor function
                     this.checkTempSensor(item);
                   }}
                 >

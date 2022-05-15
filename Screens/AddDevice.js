@@ -101,6 +101,7 @@ class AddDevicePage extends Component {
         <View style={styles.insideContainer}>
           <Text style={styles.insideText}>Enter your device name</Text>
           <TextInput
+          //enter the device details to add the device, such as name and ipaddress
             placeholder="Enter your device name"
             onChangeText={(device) => this.setState({ deviceName: device })}
             value={this.state.deviceName}
@@ -116,6 +117,7 @@ class AddDevicePage extends Component {
         </View>
         <View style={{ alignSelf: "center" }}>
           <TouchableOpacity
+          //when the user clicks on the next button, call the createAccount function
             onPress={() => this.createAccount()}
             style={styles.buttonStyle}
           >

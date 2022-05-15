@@ -272,6 +272,7 @@ class ColorAdjustmentPage extends Component {
       <View style={{flex:1,backgroundColor:this.state.currColors,height:'100%',transition:'ease all 500ms'}}>
         <View style={styles.topBar}>
           <TouchableOpacity
+          //navigate back to the home page
             onPress={() => this.props.navigation.navigate("home")}
           >
             <Image style={styles.addImage} source={backIcon} />
@@ -279,11 +280,14 @@ class ColorAdjustmentPage extends Component {
           <Text style={styles.colorPage}>{this.state.currDeviceName}</Text>
           <Text style={{ alignSelf: "center" }}>Home</Text>
         </View>
-        <TouchableOpacity onPress={() => this.checkRGB()}>
+        <TouchableOpacity 
+          //when the manual rgb button is clicked, call the checkRGB function
+          onPress={() => this.checkRGB()}>
           <Image style={styles.switchButton} source={this.state.switch} />
         </TouchableOpacity>
         <View>
           <ColorPicker
+          //display the color wheel and call the colorChanges function, then set the state of currColors to selected color in the color wheel
             onColorChange={(color) => {
               this.colorChanges(), this.setState({ currColors: color });
             }}
@@ -292,6 +296,7 @@ class ColorAdjustmentPage extends Component {
 
         <View style={styles.buttonPosition}>
           <TouchableOpacity
+          //call the removeCurrDevice function when the remove button is clicked
             onPress={() => this.removeCurrDevice(this.state.currDeviceName)}
             style={styles.buttonStyle}
           >

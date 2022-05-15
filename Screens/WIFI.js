@@ -10,7 +10,7 @@ class WiFiPage extends Component {
   }
 
   render() {
-    //default ipaddress for the wifi configuration page
+    //default ipaddress for the wifi configuration page and open it on mobile webview
     return <WebView source={{ uri: "http://192.168.4.1/" }} />;
   }
 }
