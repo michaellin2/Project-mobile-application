@@ -7,9 +7,12 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
+//install and import the asyncstorage library
 import AsyncStorage from "@react-native-async-storage/async-storage";
+//import the backIcon
 import backIcon from "../assets/backIcon.png";
 
+//stylesheet
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -59,19 +62,32 @@ class AddDevicePage extends Component {
   }
 
   createAccount = async () => {
+    //check if there's any device added
     const Device = JSON.parse(await AsyncStorage.getItem("device"));
-    if(this.state.deviceName=="" || this.state.IPAddress==""){
-      this.setState({errorMessage: "You cant type empty"});
-    }else{
+    //if the user entered empty, display error message
+    if (this.state.deviceName == "" || this.state.IPAddress == "") {
+      this.setState({ errorMessage: "You cant type empty" });
+    } else {
+      //if the device list is empty, then add the entered device into devicelist and store in asyncstorage
       if (Device == null) {
-        await AsyncStorage.setItem("device",JSON.stringify([{ DeviceName: this.state.deviceName, DeviceIp: this.state.IPAddress }]));
+        await AsyncStorage.setItem(
+          "device",
+          JSON.stringify([
+            {
+              DeviceName: this.state.deviceName,
+              DeviceIp: this.state.IPAddress,
+            },
+          ])
+        );
       } else {
+        //if there is devuce added already, add the new device and store in asyncstorage
         Device.push({
           DeviceName: this.state.deviceName,
           DeviceIp: this.state.IPAddress,
         });
         await AsyncStorage.setItem("device", JSON.stringify(Device));
       }
+      //after the device is added, take the user back to home page
       this.props.navigation.navigate("Home");
     }
   };
@@ -98,15 +114,15 @@ class AddDevicePage extends Component {
             style={styles.insideTextInput}
           />
         </View>
-        <View style={{alignSelf:'center'}}>
-          <TouchableOpacity 
+        <View style={{ alignSelf: "center" }}>
+          <TouchableOpacity
             onPress={() => this.createAccount()}
             style={styles.buttonStyle}
           >
-            <Text style={{fontSize: 20}}>Next</Text>
+            <Text style={{ fontSize: 20 }}>Next</Text>
           </TouchableOpacity>
         </View>
-        <Text style={{ alignSelf: 'center', color: 'red' }}>
+        <Text style={{ alignSelf: "center", color: "red" }}>
           {this.state.errorMessage}
         </Text>
       </View>

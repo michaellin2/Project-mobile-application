@@ -1,11 +1,14 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+//import and install the color picker library
 import ColorPicker from "react-native-wheel-color-picker";
+//import different images
 import switchOffIcon from "../assets/switchOff.png";
 import switchOnIcon from "../assets/switchOn.png";
 import backIcon from "../assets/backIcon.png";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+//stylesheet
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -64,6 +67,7 @@ class ColorAdjustmentPage extends Component {
     };
   }
 
+  //load the current device
   async componentDidMount() {
     this.refresh = this.props.navigation.addListener("focus", () => {
       this.getCurrDevice();
@@ -75,6 +79,7 @@ class ColorAdjustmentPage extends Component {
     this.refresh();
   }
 
+  //get the current device detail from asyncstorage
   getCurrDevice = async () => {
     const currentRoomName = JSON.parse(
       await AsyncStorage.getItem("currRoomName")
@@ -83,6 +88,7 @@ class ColorAdjustmentPage extends Component {
     this.setState({ currDeviceName: currentRoomName, device: allDevice });
   };
 
+  //remove current device from device list from asyncstorage, and go back to home page
   removeCurrDevice = async (devicename) => {
     const device = JSON.parse(await AsyncStorage.getItem("device"));
     const array = [];
@@ -98,6 +104,8 @@ class ColorAdjustmentPage extends Component {
     this.props.navigation.goBack();
   };
 
+  //function to turn on manual rgb light controll, first get the current room ip and compare the ip with wifi ipaddress
+  //if it mathces, call the turnOnRGBButton function from Arduino which enable the user to manually change rgb color
   turnOnRgbController = async () => {
     const currRoomIp = JSON.parse(await AsyncStorage.getItem("currRoomIp"));
     return fetch(`http://${currRoomIp}:80/turnOnRGBButton`)
@@ -113,6 +121,7 @@ class ColorAdjustmentPage extends Component {
           throw new Error("Server error");
         }
       })
+      //set the RGBButton to true
       .then((responseJson) => {
         this.setState({
           RGBButton: true,
@@ -123,6 +132,8 @@ class ColorAdjustmentPage extends Component {
       });
   };
 
+  //function to turn off manual rgb light controll, first get the current room ip and compare the ip with wifi ipaddress
+  //if it mathces, call the turnOffRGBButton function from Arduino which disables the manual rgb light controll function
   turnOffRgbController = async () => {
     const currRoomIp = JSON.parse(await AsyncStorage.getItem("currRoomIp"));
     return fetch(`http://${currRoomIp}:80/turnOffRGBButton`)
@@ -138,6 +149,7 @@ class ColorAdjustmentPage extends Component {
           throw new Error("Server error");
         }
       })
+      //set te RGBButton to false
       .then((responseJson) => {
         this.setState({
           RGBButton: false,
@@ -148,6 +160,9 @@ class ColorAdjustmentPage extends Component {
       });
   };
 
+  //At the begining, set the RGBButton state to false. If the user clicks on the switch button
+  //check if the switchIcon is switchOff, call the turnOnRGBController function and also switch the switchIcon to switchOn.
+  //else call the turnOffRGBController function and switch the switchIcon to switchOff 
   checkRGB = async () => {
     if (this.state.switch == switchOffIcon) {
       this.turnOnRgbController();
@@ -162,6 +177,7 @@ class ColorAdjustmentPage extends Component {
     }
   };
 
+  //convert hex code to RGB value
   hexToRgb = (hex) => {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result
@@ -173,6 +189,7 @@ class ColorAdjustmentPage extends Component {
       : null;
   };
 
+  //convert RGB value to Hue value because the the rgb light only takes hue value for manual controll
   rgbToHue = (rgbColor) => {
     var h;
     var r = this.hexToRgb(rgbColor).r;
@@ -182,30 +199,30 @@ class ColorAdjustmentPage extends Component {
     g = g / 255;
     b = b / 255;
 
-    // // find min and max values out of r,g,b components
+    //find min and max values out of r,g,b components
     var max = Math.max(r, g, b),
       min = Math.min(r, g, b);
 
-    // // all greyscale colors have hue of 0deg
+    //all greyscale colors have hue of 0deg
     if (max - min == 0) {
       return 0;
     }
 
     if (max == r) {
-      //     // if red is the predominent color
+      //if red is the predominent color
       h = (g - b) / (max - min);
     } else if (max == g) {
-      //     // if green is the predominent color
+      //if green is the predominent color
       h = 2 + (b - r) / (max - min);
     } else if (max == b) {
-      //     // if blue is the predominent color
+      // if blue is the predominent color
       h = 4 + (r - g) / (max - min);
     }
 
-    h = h * 60; // find the sector of 60 degrees to which the color belongs
-    // // https://www.pathofexile.com/forum/view-thread/1246208/page/45 - hsl color wheel
+    //find the sector of 60 degrees to which the color belongs
+    h = h * 60;
 
-    // // make sure h is a positive angle on the color wheel between 0 and 360
+    //make sure h is a positive angle on the color wheel between 0 and 360
     h %= 360;
     if (h < 0) {
       h += 360;
@@ -213,6 +230,9 @@ class ColorAdjustmentPage extends Component {
     this.setState({ hue: Math.round(h) });
   };
 
+  //check the state of RGBButton and if the state is true, call the rgbtohue function that converts the rgb value to hue value
+  //then store the hue value in a list which that has to be stringify after calling the setRGB function from Arduino. 
+  //That allows the user to manually controll the RGB color
   colorChanges = async () => {
     if (this.state.RGBButton == true) {
       currColor = {

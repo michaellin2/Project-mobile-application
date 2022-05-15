@@ -7,11 +7,14 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
+//import different images
 import addIcon from "../assets/addIcon.png";
 import switchOffIcon from "../assets/switchOff.png";
 import switchOnIcon from "../assets/switchOn.png";
+//install and import the asyncstorage library
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+//stylesheet
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -69,6 +72,7 @@ class HomePage extends Component {
     };
   }
 
+  //load all devices added
   async componentDidMount() {
     this.refresh = this.props.navigation.addListener("focus", () => {
       this.getDevice();
@@ -80,11 +84,13 @@ class HomePage extends Component {
     this.refresh();
   }
 
-  getMotion = async()=> {
+  //send request to the device to get the motion sensor information for the current device based on the ipaddress,
+  //it will check if the ipaddress for the device matches the wifi ipaddress, if it matches then it sends the getFunction from Arduino
+  //to the device
+  getMotion = async () => {
     const Device = JSON.parse(await AsyncStorage.getItem("device"));
     return fetch(`http://${Device[0].DeviceIp}:80/getMotion`)
       .then((response) => {
-        console.log(Device.deviceIp)
         if (response.status === 200) {
           return response.json();
         }
@@ -99,23 +105,29 @@ class HomePage extends Component {
       .catch((error) => {
         Error(error);
       });
-  }
+  };
 
+  //refresh the device list
   refreshScreen = async () => {
     this.getDevice();
   };
 
+  //get all the device store in asyncstorage and add them to devicelist
   getDevice = async () => {
     const Device = JSON.parse(await AsyncStorage.getItem("device"));
     this.setState({ deviceList: Device });
   };
 
+  //get the selected device information if the user clicks on the device, then save in the asyncstorage
+  //and take the user to the colorAdjustmentPage
   currRoom = async (item) => {
     await AsyncStorage.setItem("currRoomName", JSON.stringify(item.DeviceName));
     await AsyncStorage.setItem("currRoomIp", JSON.stringify(item.DeviceIp));
     this.props.navigation.navigate("Color");
   };
 
+  //checking if the current ipaddress matches the wifi ipaddress, and send getRGB function from Arduino to the device,
+  //the getRGB function checks the motion sensor, if the motion sensor detects motion it will send signal to turn on rgb light
   checkLightOn = async () => {
     const ip = await AsyncStorage.getItem("device");
     return fetch(`http://${ip}:80/getRGB`)
@@ -141,56 +153,69 @@ class HomePage extends Component {
       });
   };
 
+  //function to turn on temperature sensor, first check the ipaddress of the selected device and compare it to the wifi address.
+  //if it matches, call the turnOnTempButton function which will adjust the current rgb color accordingly to the current temperature
   turnOnTempSensor = async (item) => {
-    return fetch(`http://${item.DeviceIp}:80/turnOnTempButton`)
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        }
-        if (response.status === 401) {
-          throw new Error("Unauthorised");
-        } else if (response.status === 404) {
-          throw new Error("Not Found");
-        } else {
-          throw new Error("Server error");
-        }
-      })
-      .then((responseJson) => {
-        this.setState({
-          color: responseJson,
-          tempButton: true,
-        });
-      })
-      .catch((error) => {
-        Error(error);
-      });
+    return (
+      fetch(`http://${item.DeviceIp}:80/turnOnTempButton`)
+        .then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          }
+          if (response.status === 401) {
+            throw new Error("Unauthorised");
+          } else if (response.status === 404) {
+            throw new Error("Not Found");
+          } else {
+            throw new Error("Server error");
+          }
+        })
+        //if this function is called, switch tempButton to ture
+        .then((responseJson) => {
+          this.setState({
+            color: responseJson,
+            tempButton: true,
+          });
+        })
+        .catch((error) => {
+          Error(error);
+        })
+    );
   };
 
+  //function to turn off temperature sensor, first check the ipaddress of the selected device and compare it to the wifi address.
+  //if it matches, call the turnOffTempButton function which will change the rgb color to its original state
   turnOffTempSensor = async (item) => {
-    return fetch(`http://${item.DeviceIp}:80/turnOffTempButton`)
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        }
-        if (response.status === 401) {
-          throw new Error("Unauthorised");
-        } else if (response.status === 404) {
-          throw new Error("Not Found");
-        } else {
-          throw new Error("Server error");
-        }
-      })
-      .then((responseJson) => {
-        this.setState({
-          color: responseJson,
-          tempButton: false,
-        });
-      })
-      .catch((error) => {
-        Error(error);
-      });
+    return (
+      fetch(`http://${item.DeviceIp}:80/turnOffTempButton`)
+        .then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          }
+          if (response.status === 401) {
+            throw new Error("Unauthorised");
+          } else if (response.status === 404) {
+            throw new Error("Not Found");
+          } else {
+            throw new Error("Server error");
+          }
+        })
+        //if this function is called, switch tempButton to false
+        .then((responseJson) => {
+          this.setState({
+            color: responseJson,
+            tempButton: false,
+          });
+        })
+        .catch((error) => {
+          Error(error);
+        })
+    );
   };
 
+  //At the begining, set the tempButton state to false. If the user clicks on the switch button
+  //check if the switchIcon is switchOff, call the turnOnTempSensor function and also switch the switchIcon to switchOn.
+  //else call the turnOffTempSensor function and switch the switchIcon to switchOff
   checkTempSensor = async (item) => {
     if (this.state.switch == switchOffIcon) {
       this.turnOnTempSensor(item);
@@ -239,14 +264,16 @@ class HomePage extends Component {
                     this.checkTempSensor(item);
                   }}
                 >
-                  <Image style={styles.switchButton} source={this.state.switch} />
+                  <Image
+                    style={styles.switchButton}
+                    source={this.state.switch}
+                  />
                 </TouchableOpacity>
               </View>
             )}
             keyExtractor={(item) => item.DeviceIp.toString()}
           />
-        </View>    
-         
+        </View>
       </View>
     );
   }
