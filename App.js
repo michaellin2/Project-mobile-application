@@ -53,9 +53,10 @@ function App() {
     </Tab.Navigator>
   );
 }
+//export to mobile app
 export default function TabNav() {
   return (
-    //create stack navigation container and declare all the pages 
+    //create stack navigation container and declare all the pages which enables to user to navigate to any of the pages
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName="Home"
